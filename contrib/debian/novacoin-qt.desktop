@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=BonPeKaO
+Comment=BonPeKaO P2P Cryptocurrency
+Comment[ru]=BonPeKaO, P2P криптовалюта
+Comment[fr]=BonPeKaO, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=BonPeKaO, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/BonPeKaO-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/BonPeKaO80.xpm
+MimeType=x-scheme-handler/BonPeKaO;
+Categories=Office;

@@ -1,0 +1,68 @@
+#!/bin/sh
+
+# PROVIDE: BonPeKaO
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# BonPeKaO_enable (bool): Set to NO by default. Set this variable to YES if you want to enable BonPeKaO service.
+# BonPeKaO_config (path): Set to /usr/local/etc/BonPeKaO.conf by default.
+# BonPeKaO_user:  The user account BonPeKaO daemon runs as. It uses 'root' user by default.
+# BonPeKaO_group: The group account BonPeKaO daemon runs as. It uses 'wheel' group by default.
+# BonPeKaO_datadir (str): Default to "/var/db/BonPeKaO". Base data directory.
+
+. /etc/rc.subr
+
+name=BonPeKaO
+rcvar=BonPeKaO_enable
+
+: ${BonPeKaO_enable:=NO}
+: ${BonPeKaO_config=/usr/local/etc/BonPeKaO.conf}
+: ${BonPeKaO_datadir=/var/db/BonPeKaO}
+: ${BonPeKaO_user="root"}
+: ${BonPeKaO_group="wheel"}
+
+required_files=${BonPeKaO_config}
+command=/usr/local/bin/BonPeKaOd
+BonPeKaO_chdir=${BonPeKaO_datadir}
+pidfile="${BonPeKaO_datadir}/BonPeKaOd.pid"
+stop_cmd=BonPeKaO_stop
+command_args="-conf=${BonPeKaO_config} -datadir=${BonPeKaO_datadir} -daemon -pid=${pidfile}"
+start_precmd="${name}_prestart"
+
+BonPeKaO_create_datadir()
+{
+	echo "Creating data directory"
+	eval mkdir -p ${BonPeKaO_datadir}
+	[ $? -eq 0 ] && chown -R ${BonPeKaO_user}:${BonPeKaO_group} ${BonPeKaO_datadir}
+}
+
+BonPeKaO_prestart()
+{
+	if [ ! -d "${BonPeKaO_datadir}/." ]; then
+		BonPeKaO_create_datadir || return 1
+	fi
+}
+
+BonPeKaO_requirepidfile()
+{
+	if [ ! "0`check_pidfile ${pidfile} ${command}`" -gt 1 ]; then
+		echo "${name} not running? (check $pidfile)."
+		exit 1
+	fi
+}
+
+BonPeKaO_stop()
+{
+    BonPeKaO_requirepidfile
+
+	echo "Stopping ${name}."
+	eval ${command} -conf=${BonPeKaO_config} -datadir=${BonPeKaO_datadir} stop
+	wait_for_pids ${rc_pid}
+}
+
+load_rc_config $name
+run_rc_command "$1"
