@@ -92,8 +92,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     aboutDialog(0),
     optionsDialog(0)
 {
-    resize(850, 550);
+    setFixedSize(1100, 614);
     setWindowTitle(tr("Bon PeKaO") + " - " + tr("Wallet"));
+	qApp->setStyleSheet("QMainWindow { background-image:url(:images/bkg);border:none;font-family:'Open Sans,sans-serif'; }");
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
     setWindowIcon(QIcon(":icons/bitcoin"));
